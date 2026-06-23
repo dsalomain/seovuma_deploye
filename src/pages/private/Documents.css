@@ -1,0 +1,279 @@
+.documents-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.documents-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.documents-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.documents-header h1 {
+  font-size: 2.5rem;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.documents-header p {
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.documents-filters {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.filter-button:hover {
+  border-color: #1e3a8a;
+  color: #1e3a8a;
+}
+
+.filter-button.active {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: white;
+  border-color: #1e3a8a;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.document-card {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.document-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.document-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+}
+
+.file-icon {
+  font-size: 3rem;
+}
+
+.file-format {
+  padding: 0.5rem 1rem;
+  background: white;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #1e3a8a;
+  font-size: 0.875rem;
+}
+
+.document-info {
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
+}
+
+.document-title {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.document-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.document-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.meta-item .icon {
+  font-size: 1rem;
+}
+
+.document-access {
+  margin-bottom: 1rem;
+}
+
+.access-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.access-public {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.access-restricted {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.document-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.document-actions .btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+.no-documents {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.no-documents p {
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.documents-info {
+  margin-top: 2rem;
+}
+
+.info-card {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #fbbf24;
+}
+
+.info-card h3 {
+  color: #92400e;
+  margin-bottom: 0.75rem;
+  font-size: 1.125rem;
+}
+
+.info-card p {
+  color: #78350f;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .documents-header h1 {
+    font-size: 2rem;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .filter-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .document-actions {
+    flex-direction: column;
+  }
+
+  .document-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .documents-page {
+    padding: 1rem 0;
+  }
+
+  .documents-container {
+    padding: 0 1rem;
+  }
+
+  .documents-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .documents-filters {
+    padding: 1rem;
+  }
+
+  .document-card {
+    padding: 1.5rem;
+  }
+
+  .document-icon {
+    padding: 1rem;
+  }
+
+  .file-icon {
+    font-size: 2.5rem;
+  }
+}
+
+/* Made with Bob */

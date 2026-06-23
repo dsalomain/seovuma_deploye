@@ -1,0 +1,48 @@
+/* Import shared styles from Login.css */
+@import './Login.css';
+
+/* Additional styles specific to Register form */
+.auth-modal-large .auth-modal-content {
+  max-height: 85vh;
+  overflow-y: auto;
+  padding-right: 2rem;
+}
+
+/* Custom scrollbar for modal content */
+.auth-modal-large .auth-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.auth-modal-large .auth-modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.auth-modal-large .auth-modal-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.auth-modal-large .auth-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Form sections spacing */
+.form-section:not(:last-of-type) {
+  margin-bottom: 2rem;
+}
+
+/* Responsive adjustments for Register */
+@media (max-width: 768px) {
+  .auth-modal-large .auth-modal-content {
+    padding-right: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-modal-large .auth-modal-content {
+    padding-right: 1rem;
+  }
+}
+
+/* Made with Bob */
