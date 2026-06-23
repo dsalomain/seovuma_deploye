@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://dsalomain.github.io/seovuma_deploye",
+  "homepage": "https://dsalomain.github.io/seovuma_deploye/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
