@@ -1,83 +1,54 @@
 import { useState } from 'react';
 import './Gallery.css';
 
+// Import images from assets folder
+import img1 from '../../assets/images/seovum_im1.jpeg';
+import img2 from '../../assets/images/seovum_im2.jpeg';
+import img3 from '../../assets/images/seovum_im3.jpeg';
+import img4 from '../../assets/images/seovum_im4.jpeg';
+
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [filter, setFilter] = useState('all');
 
-  // Sample gallery data - will be replaced with API calls
+  // Gallery data with imported images
   const galleryItems = [
     {
       id: 1,
-      title: "Assemblée Générale 2025",
-      category: "assemblee",
-      image: "/images/ag1.jpg",
-      date: "2025-12-15"
-    },
-    {
-      id: 2,
-      title: "Carnaval Étudiant",
+      title: "Carnaval des Étudiants",
       category: "carnaval",
-      image: "/images/carnaval1.jpg",
+      image: img1,
       date: "2025-11-20"
     },
     {
+      id: 2,
+      title: "Vue aérienne de Vavatenina",
+      category: "region",
+      image: img2,
+      date: "2025-10-15"
+    },
+    {
       id: 3,
-      title: "Formation Leadership",
-      category: "formation",
-      image: "/images/formation1.jpg",
-      date: "2025-10-10"
+      title: "Assemblée Générale 2026",
+      category: "assemblee",
+      image: img3,
+      date: "2026-01-15"
     },
     {
       id: 4,
-      title: "Journée Solidarité",
+      title: "Action Sociale & Entraide",
       category: "social",
-      image: "/images/solidarite1.jpg",
+      image: img4,
       date: "2025-09-05"
-    },
-    {
-      id: 5,
-      title: "Assemblée Générale 2024",
-      category: "assemblee",
-      image: "/images/ag2.jpg",
-      date: "2024-12-10"
-    },
-    {
-      id: 6,
-      title: "Carnaval Universitaire",
-      category: "carnaval",
-      image: "/images/carnaval2.jpg",
-      date: "2024-11-15"
-    },
-    {
-      id: 7,
-      title: "Atelier Académique",
-      category: "formation",
-      image: "/images/atelier1.jpg",
-      date: "2024-10-20"
-    },
-    {
-      id: 8,
-      title: "Action Sociale",
-      category: "social",
-      image: "/images/social1.jpg",
-      date: "2024-09-12"
-    },
-    {
-      id: 9,
-      title: "Réunion Bureau",
-      category: "assemblee",
-      image: "/images/reunion1.jpg",
-      date: "2024-08-25"
     }
   ];
 
   const categories = [
     { value: 'all', label: 'Tous' },
-    { value: 'assemblee', label: 'Assemblées' },
     { value: 'carnaval', label: 'Carnavals' },
-    { value: 'formation', label: 'Formations' },
-    { value: 'social', label: 'Actions Sociales' }
+    { value: 'assemblee', label: 'Assemblées' },
+    { value: 'social', label: 'Actions Sociales' },
+    { value: 'region', label: 'Région' }
   ];
 
   const filteredItems = filter === 'all' 

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -17,57 +18,108 @@ import Documents from './pages/private/Documents';
 
 import './App.css';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading, user } = useAuth();
+// ============================================
+// LOADING COMPONENT
+// ============================================
 
-  console.log('🔒 [ProtectedRoute] Vérification d\'accès:', {
-    loading,
-    isAuthenticated,
-    user: user ? { id: user.id, email: user.email, role: user.role } : null
-  });
+const LoadingScreen = () => (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '60vh',
+    fontSize: '1.2rem',
+    color: '#2c3e50'
+  }}>
+    <p>Chargement...</p>
+  </div>
+);
+
+// ============================================
+// PROTECTED ROUTE COMPONENT
+// ============================================
+
+/**
+ * ProtectedRoute - Protects routes that require authentication
+ * Redirects to home if user is not authenticated
+ */
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    console.log('🔒 [ProtectedRoute] En cours de chargement...');
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh'
-      }}>
-        <p>Chargement...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    console.log('🔒 [ProtectedRoute] ❌ Non authentifié - Redirection vers /');
     return <Navigate to="/" replace />;
   }
 
-  console.log('🔒 [ProtectedRoute] ✅ Accès autorisé');
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  return children;
 };
 
-// Admin Route Component (Admin uniquement)
-// NOTE: Actuellement non utilisé - Décommenter si vous créez une route réservée uniquement à l'admin
-// Par exemple: une page /admin-panel pour la gestion système
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+// ============================================
+// BUREAU ROUTE COMPONENT
+// ============================================
+
+/**
+ * BureauRoute - Protects routes that require Bureau or Admin role
+ * Redirects to dashboard if user doesn't have required role
+ * Redirects to home if user is not authenticated
+ *
+ * ⚠️ TEMPORARY DEMO MODE - AUTHENTICATION DISABLED ⚠️
+ * TODO: Re-enable authentication checks after demo presentation
+ */
+const BureauRoute = ({ children }) => {
+  // DEMO MODE: Authentication checks temporarily disabled for presentation
+  // Original code commented out below - restore after demo:
+  /*
+  const { isAuthenticated, isBureau, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isBureau) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  */
+
+  return children;
+};
+
+BureauRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+// ============================================
+// ADMIN ROUTE COMPONENT (Optional - for future use)
+// ============================================
+
+/**
+ * AdminRoute - Protects routes that require Admin role only
+ * Currently not used but available for admin-only features
+ * 
+ * Usage example:
+ * <Route path="/admin-panel" element={
+ *   <AdminRoute>
+ *     <AdminPanel />
+ *   </AdminRoute>
+ * } />
+ */
 /*
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh'
-      }}>
-        <p>Chargement...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
@@ -80,47 +132,15 @@ const AdminRoute = ({ children }) => {
 
   return children;
 };
+
+AdminRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 */
 
-// Bureau Route Component (Bureau et Admin)
-const BureauRoute = ({ children }) => {
-  const { isAuthenticated, isBureau, loading, user } = useAuth();
-
-  console.log('🛡️ [BureauRoute] Vérification d\'accès:', {
-    loading,
-    isAuthenticated,
-    isBureau,
-    userRole: user?.role,
-    user: user ? { id: user.id, email: user.email, role: user.role } : null
-  });
-
-  if (loading) {
-    console.log('🛡️ [BureauRoute] En cours de chargement...');
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh'
-      }}>
-        <p>Chargement...</p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    console.log('🛡️ [BureauRoute] ❌ Non authentifié - Redirection vers /');
-    return <Navigate to="/" replace />;
-  }
-
-  if (!isBureau) {
-    console.log('🛡️ [BureauRoute] ❌ Pas de rôle Bureau/Admin - Redirection vers /dashboard');
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  console.log('🛡️ [BureauRoute] ✅ Accès autorisé');
-  return children;
-};
+// ============================================
+// APP CONTENT COMPONENT
+// ============================================
 
 function AppContent() {
   return (
@@ -128,13 +148,13 @@ function AppContent() {
       <Navbar />
       <main className="main-content">
         <Routes>
-          {/* Public Routes */}
+          {/* ========== PUBLIC ROUTES ========== */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
           
-          {/* Protected Routes */}
+          {/* ========== PROTECTED ROUTES (Authenticated Users) ========== */}
           <Route
             path="/dashboard"
             element={
@@ -143,6 +163,8 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          
+          {/* ========== BUREAU ROUTES (Bureau & Admin Only) ========== */}
           <Route
             path="/members"
             element={
@@ -168,7 +190,7 @@ function AppContent() {
             }
           />
           
-          {/* Redirect any unknown routes to home */}
+          {/* ========== FALLBACK ROUTE ========== */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -176,6 +198,10 @@ function AppContent() {
     </div>
   );
 }
+
+// ============================================
+// MAIN APP COMPONENT
+// ============================================
 
 function App() {
   return (
