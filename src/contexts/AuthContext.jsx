@@ -20,24 +20,33 @@ export const AuthProvider = ({ children }) => {
   // Vérification de la session au démarrage
   useEffect(() => {
     const initAuth = async () => {
+      console.log('🔐 [AuthContext] Initialisation de l\'authentification...');
       try {
         const storedUser = authAPI.getStoredUser();
         const isAuth = authAPI.isAuthenticated();
+        
+        console.log('🔐 [AuthContext] Stored user:', storedUser);
+        console.log('🔐 [AuthContext] Is authenticated:', isAuth);
         
         if (isAuth && storedUser) {
           // On vérifie si le token est toujours valide auprès de Django
           try {
             const currentUser = await authAPI.getCurrentUser();
+            console.log('🔐 [AuthContext] Current user from API:', currentUser);
             setUser(currentUser);
           } catch {
             // Si le token est invalide, on nettoie tout via le service (sans variable err inutilisée)
+            console.log('🔐 [AuthContext] Token invalide, déconnexion...');
             await authAPI.logout();
             setUser(null);
           }
+        } else {
+          console.log('🔐 [AuthContext] Pas d\'utilisateur stocké ou non authentifié');
         }
       } catch (err) {
-        console.error('Erreur d’initialisation de l’authentification:', err);
+        console.error('❌ [AuthContext] Erreur d\'initialisation de l\'authentification:', err);
       } finally {
+        console.log('🔐 [AuthContext] Fin de l\'initialisation, loading = false');
         setLoading(false);
       }
     };
@@ -98,6 +107,14 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!user;
   const isAdmin = user?.role === 'ADMIN';
   const isBureau = user?.role === 'ADMIN' || user?.role === 'BUREAU';
+
+  console.log('🔐 [AuthContext] Context values:', {
+    user: user ? { id: user.id, email: user.email, role: user.role } : null,
+    loading,
+    isAuthenticated,
+    isAdmin,
+    isBureau
+  });
 
   const value = {
     user,

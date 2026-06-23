@@ -19,9 +19,16 @@ import './App.css';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+
+  console.log('🔒 [ProtectedRoute] Vérification d\'accès:', {
+    loading,
+    isAuthenticated,
+    user: user ? { id: user.id, email: user.email, role: user.role } : null
+  });
 
   if (loading) {
+    console.log('🔒 [ProtectedRoute] En cours de chargement...');
     return (
       <div style={{
         display: 'flex',
@@ -34,6 +41,12 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
+  if (!isAuthenticated) {
+    console.log('🔒 [ProtectedRoute] ❌ Non authentifié - Redirection vers /');
+    return <Navigate to="/" replace />;
+  }
+
+  console.log('🔒 [ProtectedRoute] ✅ Accès autorisé');
   return isAuthenticated ? children : <Navigate to="/" replace />;
 };
 
@@ -71,9 +84,18 @@ const AdminRoute = ({ children }) => {
 
 // Bureau Route Component (Bureau et Admin)
 const BureauRoute = ({ children }) => {
-  const { isAuthenticated, isBureau, loading } = useAuth();
+  const { isAuthenticated, isBureau, loading, user } = useAuth();
+
+  console.log('🛡️ [BureauRoute] Vérification d\'accès:', {
+    loading,
+    isAuthenticated,
+    isBureau,
+    userRole: user?.role,
+    user: user ? { id: user.id, email: user.email, role: user.role } : null
+  });
 
   if (loading) {
+    console.log('🛡️ [BureauRoute] En cours de chargement...');
     return (
       <div style={{
         display: 'flex',
@@ -87,13 +109,16 @@ const BureauRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
+    console.log('🛡️ [BureauRoute] ❌ Non authentifié - Redirection vers /');
     return <Navigate to="/" replace />;
   }
 
   if (!isBureau) {
+    console.log('🛡️ [BureauRoute] ❌ Pas de rôle Bureau/Admin - Redirection vers /dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
+  console.log('🛡️ [BureauRoute] ✅ Accès autorisé');
   return children;
 };
 
