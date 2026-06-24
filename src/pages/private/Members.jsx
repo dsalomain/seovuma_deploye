@@ -39,8 +39,56 @@ const Members = () => {
     }
   ];
 
-  const regions = ['all', 'Analamanga', 'Haute Matsiatra', 'Atsinanana', 'Vakinankaratra'];
-  const universities = ['all', 'Université d\'Antananarivo', 'Université de Fianarantsoa', 'Université de Toamasina'];
+  // Les 23 régions officielles de Madagascar (triées par ordre alphabétique)
+  const regions = [
+    'Alaotra-Mangoro',
+    'Amoron\'i Mania',
+    'Analamanga',
+    'Analanjirofo',
+    'Androy',
+    'Anosy',
+    'Atsimo-Andrefana',
+    'Atsimo-Atsinanana',
+    'Atsinanana',
+    'Betsiboka',
+    'Boeny',
+    'Bongolava',
+    'Diana',
+    'Fitovinany',
+    'Haute Matsiatra',
+    'Ihorombe',
+    'Itasy',
+    'Melaky',
+    'Menabe',
+    'Sava',
+    'Sofia',
+    'Vakinankaratra',
+    'Vatovavy'
+  ];
+
+  // Universités publiques et privées de Madagascar (triées par ordre alphabétique)
+  const universities = [
+    'ACEEM',
+    'CNTEMAD',
+    'ENI Fianarantsoa',
+    'EMIT',
+    'ESSCA',
+    'ESGM',
+    'ESTI',
+    'HEI',
+    'IES-AV',
+    'INSCAE',
+    'ISPM',
+    'IST',
+    'IT University',
+    'ORION University Madagascar',
+    'Université d\'Antananarivo',
+    'Université d\'Antsiranana',
+    'Université de Fianarantsoa',
+    'Université de Mahajanga',
+    'Université de Toamasina',
+    'Université de Toliara'
+  ];
 
   const filteredMembers = members.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,7 +125,7 @@ const Members = () => {
               className="filter-select"
             >
               <option value="all">Toutes les régions</option>
-              {regions.slice(1).map(region => (
+              {regions.map(region => (
                 <option key={region} value={region}>{region}</option>
               ))}
             </select>
@@ -88,7 +136,7 @@ const Members = () => {
               className="filter-select"
             >
               <option value="all">Toutes les universités</option>
-              {universities.slice(1).map(university => (
+              {universities.map(university => (
                 <option key={university} value={university}>{university}</option>
               ))}
             </select>
