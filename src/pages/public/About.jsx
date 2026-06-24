@@ -2,30 +2,30 @@ import './About.css';
 
 const About = () => {
   const bureauMembers = [
-    { role: "Secrétaire Général", count: 1 },
-    { role: "Conseillers", count: 6 },
-    { role: "Chef de volet par université", count: 2 },
-    { role: "Chef de volet communication", count: 1 },
-    { role: "Trésorier(e)", count: 1 },
-    { role: "Commissaire aux comptes", count: 1 }
+    { role: "Secrétaire Général", count: 1, description: "Chargé de la coordination générale et du suivi des activités" },
+    { role: "Conseillers", count: 6, description: "Appuyant la prise de décisions stratégiques et l'orientation des actions" },
+    { role: "Chef de volet par université", count: 2, description: "Assurant la coordination locale et la mise en œuvre des activités sur le terrain" },
+    { role: "Chef de volet communication", count: 1, description: "Responsable de la gestion de l'information et de la visibilité des activités" },
+    { role: "Trésorier(e)", count: 1, description: "Chargé(e) de la gestion financière et de la transparence des ressources" },
+    { role: "Commissaires aux comptes", count: 7, description: "Responsables du contrôle et de la vérification des finances" }
   ];
 
   const commissions = [
     {
-      name: "Organisation des événements",
-      description: "Planification et coordination des activités de l'association"
-    },
-    {
       name: "Affaires académiques",
-      description: "Soutien académique et tutorat entre étudiants"
+      description: "Ce volet est chargé de promouvoir l'excellence académique et la réussite universitaire des membres. Il assure le suivi des questions liées aux études, diffuse les informations relatives aux bourses, aux formations et aux opportunités académiques, accompagne les étudiants dans leur parcours universitaire et organise des activités de soutien pédagogique, de mentorat et de partage d'expériences."
     },
     {
       name: "Communication et médias",
-      description: "Gestion de la communication interne et externe"
+      description: "Ce volet assure la gestion de la communication interne et externe de la SEOVUMA. Il est chargé de la diffusion des informations officielles, de la valorisation des activités de l'association, de l'animation des réseaux sociaux, ainsi que des relations avec les médias et les partenaires."
     },
     {
       name: "Social et entraide",
-      description: "Actions de solidarité et soutien aux membres"
+      description: "Ce volet est chargé de la mise en œuvre des actions de solidarité au sein de la SEOVUMA. Il coordonne les initiatives de soutien aux membres en difficulté, organise des activités d'entraide, et favorise la cohésion sociale et l'esprit de solidarité entre les étudiants."
+    },
+    {
+      name: "Organisation des événements",
+      description: "Ce volet est chargé de la planification, de la coordination et de la mise en œuvre des activités de la SEOVUMA. Il assure la préparation logistique des événements, la gestion du calendrier des activités, ainsi que la mobilisation des membres pour garantir le bon déroulement des manifestations."
     }
   ];
 
@@ -53,14 +53,28 @@ const About = () => {
             <div className="section-text">
               <h2>Historique</h2>
               <p>
-                SEOVUMA est une organisation regroupant les étudiants originaires de Vavatenina 
-                inscrits dans différentes universités et centres de formation à Madagascar. Elle a 
-                été créée dans le but de renforcer la solidarité, la coordination et l'entraide entre 
+                SEOVUMA est une organisation regroupant les étudiants originaires de Vavatenina
+                inscrits dans différentes universités et centres de formation à Madagascar. Elle a
+                été créée dans le but de renforcer la solidarité, la coordination et l'entraide entre
                 les étudiants issus de la même localité.
               </p>
               <p>
-                Au fil du temps, elle s'est structurée en une entité organisée, permettant la mise 
-                en œuvre d'activités académiques, sociales et culturelles au service de ses membres.
+                L'initiative de sa création revient à un groupe de jeunes leaders dynamiques et engagés
+                originaires du district de Vavatenina, portés par une vision commune de développement,
+                de solidarité et de responsabilité sociale.
+              </p>
+              <p>
+                Cette organisation est née d'une vision simple mais essentielle : rassembler les jeunes
+                de Vavatenina afin de renforcer les liens entre étudiants et anciens étudiants, tout en
+                développant un esprit de solidarité durable. Elle vise également à encourager une entraide
+                réelle entre les membres, notamment en soutenant les étudiants et jeunes en difficulté, et
+                en favorisant une culture de partage et de responsabilité collective.
+              </p>
+              <p>
+                Au fil du temps, SEOVUMA s'est structurée en une entité organisée et dynamique, permettant
+                la mise en œuvre d'activités académiques, sociales, culturelles et communautaires au service
+                de ses membres. Cette évolution a renforcé le sentiment d'appartenance et consolidé un réseau
+                solide, basé sur l'entraide, la solidarité et le développement collectif.
               </p>
             </div>
           </div>
@@ -94,11 +108,16 @@ const About = () => {
               </div>
               <h3>Mission</h3>
               <ul className="mission-list">
-                <li>Renforcer la solidarité entre les étudiants</li>
+                <li>Renforcer la solidarité et la cohésion entre les étudiants</li>
                 <li>Faciliter l'entraide académique et sociale</li>
                 <li>Promouvoir l'excellence et la réussite universitaire</li>
                 <li>Encourager l'engagement citoyen et associatif</li>
-                <li>Valoriser les initiatives étudiantes au niveau local et national</li>
+                <li>Valoriser les initiatives étudiantes locales et nationales</li>
+                <li>Développer l'esprit de leadership et de responsabilité chez les étudiants</li>
+                <li>Favoriser le partage de connaissances et d'expériences</li>
+                <li>Soutenir l'insertion professionnelle des étudiants</li>
+                <li>Promouvoir la discipline, l'éthique et les valeurs universitaires</li>
+                <li>Créer un réseau dynamique d'étudiants à travers les universités de Madagascar</li>
               </ul>
             </div>
           </div>
@@ -110,9 +129,18 @@ const About = () => {
         <div className="container">
           <h2 className="section-title">Organisation</h2>
           <p className="section-description">
-            SEOVUMA est structurée autour d'un bureau exécutif et de membres répartis selon 
-            les universités et établissements.
+            SEOVUMA est structurée autour d'un bureau exécutif et d'une base de membres répartis
+            dans les différentes universités et établissements d'enseignement supérieur à travers Madagascar.
           </p>
+          <div className="org-description">
+            <ul>
+              <li>Le bureau exécutif assure la coordination générale, la prise de décisions et la mise en œuvre des activités</li>
+              <li>Les responsables par université servent de relais entre le bureau exécutif et les membres locaux</li>
+              <li>Chaque université dispose d'un point focal appuyé par deux chefs de volets</li>
+              <li>Des commissions spécialisées sont mises en place pour les différents domaines d'action</li>
+              <li>Un système de coordination inter-universitaire assure l'unité et la cohérence des actions</li>
+            </ul>
+          </div>
 
           {/* Structure */}
           <div className="org-structure">
@@ -129,8 +157,11 @@ const About = () => {
                 <div className="bureau-list">
                   {bureauMembers.map((member, index) => (
                     <div key={index} className="bureau-item">
-                      <span className="bureau-count">({member.count})</span>
-                      <span className="bureau-role">{member.role}</span>
+                      <div className="bureau-header">
+                        <span className="bureau-count">({member.count})</span>
+                        <span className="bureau-role">{member.role}</span>
+                      </div>
+                      <p className="bureau-description">{member.description}</p>
                     </div>
                   ))}
                 </div>
@@ -157,7 +188,17 @@ const About = () => {
             <div className="org-level">
               <div className="org-card tertiary">
                 <h4>Membres</h4>
-                <p>Tous les étudiants originaires de Vavatenina inscrits dans les universités de Madagascar</p>
+                <p>
+                  Les membres de SEOVUMA sont constitués de tous les étudiants originaires de Vavatenina
+                  inscrits dans les universités et établissements d'enseignement supérieur à Madagascar.
+                  L'association intègre également les anciens étudiants universitaires originaires de Vavatenina,
+                  qui souhaitent continuer à contribuer au développement des activités et au renforcement du réseau.
+                </p>
+                <p>
+                  SEOVUMA est également ouverte aux parrains et partenaires volontaires désireux de soutenir
+                  l'association, dans un cadre strictement apolitique et orienté uniquement vers le développement
+                  étudiant et communautaire.
+                </p>
               </div>
             </div>
           </div>
@@ -170,24 +211,29 @@ const About = () => {
           <h2 className="section-title">Nos Valeurs</h2>
           <div className="values-grid">
             <div className="value-card">
+              <div className="value-icon">🎯</div>
+              <h4>Mission</h4>
+              <p>Renforcer la solidarité et promouvoir l'entraide entre les étudiants originaires de Vavatenina, en favorisant la cohésion, l'accompagnement mutuel et le développement d'un esprit d'unité au sein de la communauté étudiante.</p>
+            </div>
+            <div className="value-card">
               <div className="value-icon">🤝</div>
               <h4>Solidarité</h4>
-              <p>Entraide et soutien mutuel entre tous les membres</p>
+              <p>Créer et renforcer un réseau d'entraide académique et sociale entre tous les membres, afin de favoriser le soutien mutuel, la coopération et l'accompagnement dans les études et la vie étudiante.</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🎓</div>
               <h4>Excellence</h4>
-              <p>Promotion de la réussite académique et professionnelle</p>
+              <p>Promouvoir la réussite universitaire des membres ainsi que leur engagement citoyen, en encourageant le mérite, la discipline, l'implication académique et la participation active au développement de la société.</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🌟</div>
               <h4>Engagement</h4>
-              <p>Participation active au développement de la communauté</p>
+              <p>Promouvoir la participation active des membres au développement de la communauté étudiante et locale, en encourageant l'implication dans des actions solidaires, éducatives et sociales.</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🔗</div>
               <h4>Unité</h4>
-              <p>Renforcement des liens entre étudiants de Vavatenina</p>
+              <p>Renforcer l'unité entre les étudiants originaires de Vavatenina, consolider les liens fraternels et promouvoir un esprit d'appartenance commun, au-delà des différences d'établissements ou de parcours.</p>
             </div>
           </div>
         </div>

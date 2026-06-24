@@ -68,11 +68,14 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const response = await authAPI.login(credentials);
-      setUser(response.user);
+      // Laravel returns: { message: "...", user: {...}, token: "..." }
+      if (response.user) {
+        setUser(response.user);
+      }
       return response;
     } catch (err) {
-      const errorMessage = err.response?.data?.error ||
-                          err.response?.data?.detail ||
+      const errorMessage = err.response?.data?.message ||
+                          err.response?.data?.error ||
                           'Erreur de connexion';
       setError(errorMessage);
       throw new Error(errorMessage, { cause: err });
@@ -83,12 +86,15 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const response = await authAPI.register(userData);
-      setUser(response.user);
+      // Laravel returns: { message: "...", user: {...}, token: "..." }
+      if (response.user) {
+        // Set user after successful registration
+        setUser(response.user);
+      }
       return response;
     } catch (err) {
-      const errorMessage = err.response?.data?.error ||
-                          err.response?.data?.email?.[0] ||
-                          err.response?.data?.password?.[0] ||
+      const errorMessage = err.response?.data?.message ||
+                          err.response?.data?.error ||
                           'Erreur lors de l\'inscription';
       setError(errorMessage);
       throw new Error(errorMessage, { cause: err });
@@ -116,8 +122,8 @@ export const AuthProvider = ({ children }) => {
   // ============================================
 
   const isAuthenticated = !!user;
-  const isAdmin = user?.role === 'ADMIN';
-  const isBureau = user?.role === 'ADMIN' || user?.role === 'BUREAU';
+  const isAdmin = user?.role === 'admin';
+  const isBureau = user?.role === 'admin' || user?.role === 'bureau';
 
   // ============================================
   // CONTEXT VALUE

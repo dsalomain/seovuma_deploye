@@ -4,25 +4,33 @@ import axios from 'axios';
 // CONFIGURATION
 // ============================================
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const SANCTUM_BASE_URL = import.meta.env.VITE_SANCTUM_URL || 'http://localhost:8000';
 
-// Create axios instance with default config
+// Create axios instance with default config for Laravel Sanctum
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
   timeout: 10000,
+  withCredentials: true, // Important for Sanctum - sends cookies
+  withXSRFToken: true, // Important for CSRF protection
 });
+
+// Set global defaults
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
 
 // ============================================
 // INTERCEPTORS
 // ============================================
 
-// Request interceptor - Add auth token to all requests
+// Request interceptor - Add token to headers
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,52 +41,37 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle token refresh and errors
+// Response interceptor - Handle authentication errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    // If error is 401 and we haven't tried to refresh yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (refreshToken) {
-          // Try to refresh the token
-          const response = await axios.post(`${API_BASE_URL}/users/token/refresh/`, {
-            refresh: refreshToken
-          });
-
-          const { access } = response.data;
-          localStorage.setItem('access_token', access);
-
-          // Retry the original request with new token
-          originalRequest.headers.Authorization = `Bearer ${access}`;
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        // Refresh failed - clear tokens and redirect to home
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        window.location.href = '/';
-        return Promise.reject(refreshError);
+    if (error.response?.status === 401) {
+      // Clear auth data
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      
+      // Redirect to login if not already there
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
       }
     }
-
-    // For other 401 errors or if refresh failed
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-      window.location.href = '/';
-    }
-
     return Promise.reject(error);
   }
 );
+
+// ============================================
+// CSRF TOKEN HELPER
+// ============================================
+
+const getCsrfToken = async () => {
+  try {
+    await axios.get(`${SANCTUM_BASE_URL}/sanctum/csrf-cookie`, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error('Failed to get CSRF token:', error);
+  }
+};
 
 // ============================================
 // AUTH API
@@ -89,10 +82,10 @@ export const authAPI = {
    * Register a new user
    */
   register: async (userData) => {
-    const response = await api.post('/users/register/', userData);
-    if (response.data.tokens) {
-      localStorage.setItem('access_token', response.data.tokens.access);
-      localStorage.setItem('refresh_token', response.data.tokens.refresh);
+    await getCsrfToken();
+    const response = await api.post('/auth/register', userData);
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
@@ -102,10 +95,10 @@ export const authAPI = {
    * Login user
    */
   login: async (credentials) => {
-    const response = await api.post('/users/login/', credentials);
-    if (response.data.tokens) {
-      localStorage.setItem('access_token', response.data.tokens.access);
-      localStorage.setItem('refresh_token', response.data.tokens.refresh);
+    await getCsrfToken();
+    const response = await api.post('/auth/login', credentials);
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
@@ -115,61 +108,46 @@ export const authAPI = {
    * Logout user
    */
   logout: async () => {
-    const refreshToken = localStorage.getItem('refresh_token');
     try {
-      if (refreshToken) {
-        await api.post('/users/logout/', { refresh_token: refreshToken });
-      }
+      await api.post('/auth/logout');
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
     }
   },
 
   /**
-   * Get current user profile
+   * Get current authenticated user
    */
   getCurrentUser: async () => {
-    const response = await api.get('/users/profile/');
-    localStorage.setItem('user', JSON.stringify(response.data));
+    const response = await api.get('/auth/user');
+    if (response.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data.user;
+    }
+    throw new Error('User not found');
+  },
+
+  /**
+   * Refresh token
+   */
+  refresh: async () => {
+    const response = await api.post('/auth/refresh');
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
     return response.data;
   },
 
   /**
    * Update user profile
    */
-  updateProfile: async (userData) => {
-    const response = await api.put('/users/profile/', userData);
-    if (response.data) {
-      localStorage.setItem('user', JSON.stringify(response.data));
-    }
-    return response.data;
-  },
-
-  /**
-   * Change password
-   */
-  changePassword: async (passwordData) => {
-    const response = await api.post('/users/change-password/', passwordData);
-    return response.data;
-  },
-
-  /**
-   * Refresh access token
-   */
-  refreshToken: async () => {
-    const refreshToken = localStorage.getItem('refresh_token');
-    const response = await api.post('/users/token/refresh/', {
-      refresh: refreshToken
-    });
-    if (response.data.access) {
-      localStorage.setItem('access_token', response.data.access);
-      if (response.data.refresh) {
-        localStorage.setItem('refresh_token', response.data.refresh);
-      }
+  updateProfile: async (profileData) => {
+    const response = await api.put('/auth/profile', profileData);
+    if (response.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
@@ -178,7 +156,7 @@ export const authAPI = {
    * Check if user is authenticated
    */
   isAuthenticated: () => {
-    return !!localStorage.getItem('access_token');
+    return !!localStorage.getItem('auth_token');
   },
 
   /**
@@ -191,131 +169,251 @@ export const authAPI = {
 };
 
 // ============================================
+// USERS API
+// ============================================
+
+export const usersAPI = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/users', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  },
+
+  create: async (userData) => {
+    const response = await api.post('/users', userData);
+    return response.data;
+  },
+
+  update: async (id, userData) => {
+    const response = await api.put(`/users/${id}`, userData);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+
+  assignRole: async (id, role) => {
+    const response = await api.post(`/users/${id}/assign-role`, { role });
+    return response.data;
+  },
+
+  removeRole: async (id, role) => {
+    const response = await api.post(`/users/${id}/remove-role`, { role });
+    return response.data;
+  },
+};
+
+// ============================================
 // MEMBERS API
 // ============================================
 
 export const membersAPI = {
-  /**
-   * Get all users/members (Admin/Bureau only)
-   */
   getAll: async (params = {}) => {
-    const response = await api.get('/users/', { params });
+    const response = await api.get('/members', { params });
     return response.data;
   },
 
-  /**
-   * Get user/member by ID
-   */
   getById: async (id) => {
-    const response = await api.get(`/users/${id}/`);
+    const response = await api.get(`/members/${id}`);
     return response.data;
   },
 
-  /**
-   * Search members
-   */
-  search: async (searchTerm) => {
-    const response = await api.get('/users/', {
-      params: { search: searchTerm }
+  create: async (memberData) => {
+    const response = await api.post('/members', memberData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  update: async (id, memberData) => {
+    const response = await api.post(`/members/${id}`, memberData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await api.delete(`/members/${id}`);
+    return response.data;
+  },
+
+  attachProjects: async (id, projectIds) => {
+    const response = await api.post(`/members/${id}/attach-projects`, {
+      project_ids: projectIds,
+    });
+    return response.data;
+  },
+
+  detachProjects: async (id, projectIds) => {
+    const response = await api.post(`/members/${id}/detach-projects`, {
+      project_ids: projectIds,
     });
     return response.data;
   },
 };
 
 // ============================================
-// ACTIVITIES API
+// UNIVERSITIES API
 // ============================================
 
-export const activitiesAPI = {
+export const universitiesAPI = {
   getAll: async (params = {}) => {
-    const response = await api.get('/activities/', { params });
+    const response = await api.get('/universities', { params });
     return response.data;
   },
 
   getById: async (id) => {
-    const response = await api.get(`/activities/${id}/`);
+    const response = await api.get(`/universities/${id}`);
     return response.data;
   },
 
-  create: async (activityData) => {
-    const response = await api.post('/activities/', activityData);
+  create: async (universityData) => {
+    const response = await api.post('/universities', universityData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 
-  update: async (id, activityData) => {
-    const response = await api.put(`/activities/${id}/`, activityData);
+  update: async (id, universityData) => {
+    const response = await api.post(`/universities/${id}`, universityData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/activities/${id}/`);
+    const response = await api.delete(`/universities/${id}`);
+    return response.data;
+  },
+
+  getMembers: async (id) => {
+    const response = await api.get(`/universities/${id}/members`);
+    return response.data;
+  },
+
+  getProjects: async (id) => {
+    const response = await api.get(`/universities/${id}/projects`);
     return response.data;
   },
 };
 
 // ============================================
-// DOCUMENTS API
+// PROJECTS API
 // ============================================
 
-export const documentsAPI = {
+export const projectsAPI = {
   getAll: async (params = {}) => {
-    const response = await api.get('/documents/', { params });
+    const response = await api.get('/projects', { params });
     return response.data;
   },
 
   getById: async (id) => {
-    const response = await api.get(`/documents/${id}/`);
+    const response = await api.get(`/projects/${id}`);
     return response.data;
   },
 
-  upload: async (formData) => {
-    const response = await api.post('/documents/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  create: async (projectData) => {
+    const response = await api.post('/projects', projectData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  update: async (id, projectData) => {
+    const response = await api.post(`/projects/${id}`, projectData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/documents/${id}/`);
+    const response = await api.delete(`/projects/${id}`);
     return response.data;
   },
 
-  download: async (id) => {
-    const response = await api.get(`/documents/${id}/download/`, {
-      responseType: 'blob',
+  attachMembers: async (id, memberIds) => {
+    const response = await api.post(`/projects/${id}/attach-members`, {
+      member_ids: memberIds,
+    });
+    return response.data;
+  },
+
+  detachMembers: async (id, memberIds) => {
+    const response = await api.post(`/projects/${id}/detach-members`, {
+      member_ids: memberIds,
+    });
+    return response.data;
+  },
+
+  attachUniversities: async (id, universityIds) => {
+    const response = await api.post(`/projects/${id}/attach-universities`, {
+      university_ids: universityIds,
+    });
+    return response.data;
+  },
+
+  detachUniversities: async (id, universityIds) => {
+    const response = await api.post(`/projects/${id}/detach-universities`, {
+      university_ids: universityIds,
     });
     return response.data;
   },
 };
 
 // ============================================
-// GALLERY API
+// NEWS API
 // ============================================
 
-export const galleryAPI = {
+export const newsAPI = {
+  // Public endpoints
+  getPublished: async (params = {}) => {
+    const response = await api.get('/news/published', { params });
+    return response.data;
+  },
+
+  getBySlug: async (slug) => {
+    const response = await api.get(`/news/${slug}`);
+    return response.data;
+  },
+
+  // Protected endpoints
   getAll: async (params = {}) => {
-    const response = await api.get('/gallery/', { params });
+    const response = await api.get('/news', { params });
     return response.data;
   },
 
-  getById: async (id) => {
-    const response = await api.get(`/gallery/${id}/`);
+  create: async (newsData) => {
+    const response = await api.post('/news', newsData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 
-  upload: async (formData) => {
-    const response = await api.post('/gallery/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  update: async (id, newsData) => {
+    const response = await api.post(`/news/${id}`, newsData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/gallery/${id}/`);
+    const response = await api.delete(`/news/${id}`);
+    return response.data;
+  },
+
+  publish: async (id) => {
+    const response = await api.post(`/news/${id}/publish`);
+    return response.data;
+  },
+
+  archive: async (id) => {
+    const response = await api.post(`/news/${id}/archive`);
     return response.data;
   },
 };
@@ -325,38 +423,52 @@ export const galleryAPI = {
 // ============================================
 
 export const contactAPI = {
+  // Public endpoint
   send: async (messageData) => {
-    const response = await api.post('/contact/', messageData);
-    return response.data;
-  },
-};
-
-// ============================================
-// NOTIFICATIONS API
-// ============================================
-
-export const notificationsAPI = {
-  getAll: async () => {
-    const response = await api.get('/notifications/');
+    const response = await api.post('/contact', messageData);
     return response.data;
   },
 
-  markAsRead: async (id) => {
-    const response = await api.put(`/notifications/${id}/read/`);
+  // Protected endpoints
+  getAll: async (params = {}) => {
+    const response = await api.get('/contacts', { params });
     return response.data;
   },
 
-  markAllAsRead: async () => {
-    const response = await api.put('/notifications/read-all/');
+  getById: async (id) => {
+    const response = await api.get(`/contacts/${id}`);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.put(`/contacts/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/notifications/${id}/`);
+    const response = await api.delete(`/contacts/${id}`);
+    return response.data;
+  },
+
+  markAsReplied: async (id) => {
+    const response = await api.post(`/contacts/${id}/mark-replied`);
+    return response.data;
+  },
+
+  archive: async (id) => {
+    const response = await api.post(`/contacts/${id}/archive`);
+    return response.data;
+  },
+
+  getPendingCount: async () => {
+    const response = await api.get('/contacts/pending-count');
+    return response.data;
+  },
+
+  getRecent: async (limit = 5) => {
+    const response = await api.get('/contacts/recent', { params: { limit } });
     return response.data;
   },
 };
 
 export default api;
-
-// Made with Bob

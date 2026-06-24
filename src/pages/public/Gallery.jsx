@@ -15,15 +15,15 @@ const Gallery = () => {
   const galleryItems = [
     {
       id: 1,
-      title: "Carnaval des Étudiants",
-      category: "carnaval",
+      title: "Fête des Étudiants",
+      category: "fetes",
       image: img1,
       date: "2025-11-20"
     },
     {
       id: 2,
-      title: "Vue aérienne de Vavatenina",
-      category: "region",
+      title: "Sensibilisation Académique",
+      category: "sensibilisation",
       image: img2,
       date: "2025-10-15"
     },
@@ -40,15 +40,30 @@ const Gallery = () => {
       category: "social",
       image: img4,
       date: "2025-09-05"
+    },
+    {
+      id: 5,
+      title: "Réunion du Bureau Exécutif",
+      category: "reunions",
+      image: img1,
+      date: "2025-12-10"
+    },
+    {
+      id: 6,
+      title: "Campagne de Sensibilisation",
+      category: "sensibilisation",
+      image: img2,
+      date: "2025-08-20"
     }
   ];
 
   const categories = [
     { value: 'all', label: 'Tous' },
-    { value: 'carnaval', label: 'Carnavals' },
-    { value: 'assemblee', label: 'Assemblées' },
-    { value: 'social', label: 'Actions Sociales' },
-    { value: 'region', label: 'Région' }
+    { value: 'sensibilisation', label: 'Sensibilisation' },
+    { value: 'fetes', label: 'Fêtes' },
+    { value: 'reunions', label: 'Réunions' },
+    { value: 'assemblee', label: 'Assemblées générales' },
+    { value: 'social', label: 'Actions sociales' }
   ];
 
   const filteredItems = filter === 'all' 
@@ -75,7 +90,7 @@ const Gallery = () => {
       <section className="gallery-header">
         <div className="container">
           <h1>Galerie Photos</h1>
-          <p>Découvrez les moments forts de SEOVUMA en images</p>
+          <p>Découvrez les moments forts de SEOVUMA en images.</p>
         </div>
       </section>
 

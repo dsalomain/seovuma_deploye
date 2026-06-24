@@ -3,6 +3,13 @@
   min-height: 100vh;
 }
 
+/* Container local pour About.css - évite les conflits avec App.css */
+.about .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 /* Header Section */
 .about-header {
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
@@ -30,18 +37,18 @@
   background: white;
 }
 
-.section-content {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 3rem;
-  align-items: start;
+/* Sélecteur plus spécifique pour éviter les conflits CSS globaux */
+.history-section .section-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
   max-width: 900px;
   margin: 0 auto;
 }
 
 .section-icon {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   border-radius: 50%;
@@ -49,6 +56,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section-icon svg {
+  width: 35px;
+  height: 35px;
 }
 
 .section-text h2 {
@@ -86,18 +99,25 @@
   padding: 3rem;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
 .vm-icon {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.vm-icon svg {
+  width: 35px;
+  height: 35px;
 }
 
 .vm-card h3 {
@@ -117,24 +137,26 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: left;
+  display: inline-block;
 }
 
 .mission-list li {
   color: #374151;
   line-height: 1.8;
   font-size: 1.05rem;
-  padding-left: 2rem;
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   margin-bottom: 0.75rem;
 }
 
 .mission-list li::before {
   content: '✓';
-  position: absolute;
-  left: 0;
   color: #10b981;
   font-weight: 700;
   font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
 /* Organization Section */
@@ -156,8 +178,40 @@
   color: #6b7280;
   font-size: 1.125rem;
   max-width: 800px;
-  margin: 0 auto 3rem;
+  margin: 0 auto 1.5rem;
   line-height: 1.6;
+}
+
+.org-description {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.org-description ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.org-description li {
+  color: #374151;
+  line-height: 1.8;
+  font-size: 1rem;
+  padding-left: 2rem;
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.org-description li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1.25rem;
 }
 
 .org-structure {
@@ -220,8 +274,15 @@
 
 .bureau-item {
   background: rgba(255, 255, 255, 0.2);
-  padding: 1rem;
+  padding: 1.25rem;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.bureau-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -233,13 +294,22 @@
 }
 
 .bureau-role {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.bureau-description {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* Commissions Grid */
 .commissions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
 }
 
@@ -250,6 +320,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   text-align: center;
   transition: all 0.3s ease;
+  width: 280px;
+  flex-grow: 0;
 }
 
 .commission-card:hover {
@@ -258,8 +330,8 @@
 }
 
 .commission-icon {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   border-radius: 50%;
@@ -267,6 +339,12 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.commission-icon svg {
+  width: 35px;
+  height: 35px;
 }
 
 .commission-card h5 {
@@ -278,9 +356,10 @@
 
 .commission-card p {
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.6;
   margin: 0;
+  text-align: justify;
 }
 
 /* Values Section */
@@ -291,7 +370,7 @@
 
 .values-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
 }
@@ -324,8 +403,10 @@
 
 .value-card p {
   color: #6b7280;
-  line-height: 1.6;
+  line-height: 1.7;
   margin: 0;
+  font-size: 0.95rem;
+  text-align: justify;
 }
 
 /* Responsive Design */
@@ -334,8 +415,10 @@
     font-size: 2.5rem;
   }
 
-  .section-content {
-    grid-template-columns: 1fr;
+  /* Correction : passage de flex à column pour mobile */
+  .history-section .section-content {
+    flex-direction: column;
+    align-items: center;
     gap: 2rem;
   }
 
@@ -355,8 +438,9 @@
     grid-template-columns: 1fr;
   }
 
+  /* Correction : utilisation de flex-direction au lieu de grid-template-columns */
   .commissions-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .values-grid {

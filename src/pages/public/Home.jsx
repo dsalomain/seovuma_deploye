@@ -91,7 +91,7 @@ const Home = () => {
                 </svg>
               </div>
               <h3>Mission</h3>
-              <p>Renforcer la solidarité et faciliter l'entraide entre les étudiants originaires de Vavatenina</p>
+              <p>Renforcer la solidarité et promouvoir l'entraide entre les étudiants originaires de Vavatenina, en favorisant la cohésion et l'accompagnement mutuel</p>
             </div>
 
             <div className="mission-card">
@@ -101,7 +101,7 @@ const Home = () => {
                 </svg>
               </div>
               <h3>Solidarité</h3>
-              <p>Créer un réseau d'entraide académique et sociale pour tous les membres</p>
+              <p>Créer et renforcer un réseau d'entraide académique et sociale entre tous les membres, favorisant le soutien mutuel et la coopération</p>
             </div>
 
             <div className="mission-card">
@@ -111,7 +111,7 @@ const Home = () => {
                 </svg>
               </div>
               <h3>Excellence</h3>
-              <p>Promouvoir la réussite universitaire et l'engagement citoyen</p>
+              <p>Promouvoir la réussite universitaire et l'engagement citoyen, en encourageant le mérite, la discipline et la participation active</p>
             </div>
           </div>
         </div>

@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../ui/Button';
 import './Login.css';
 
 const Login = ({ onClose, onSwitchToRegister }) => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -58,7 +60,8 @@ const Login = ({ onClose, onSwitchToRegister }) => {
     try {
       await login(formData);
       onClose();
-      // Redirect will be handled by App.jsx based on user role
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
     } catch (error) {
       setGeneralError(error.message || 'Erreur de connexion');
     } finally {

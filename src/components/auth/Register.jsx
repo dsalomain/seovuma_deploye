@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../ui/Button';
 import './Register.css';
@@ -20,6 +21,7 @@ const COMMUNES = [
 
 const Register = ({ onClose, onSwitchToLogin }) => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -115,10 +117,16 @@ const Register = ({ onClose, onSwitchToLogin }) => {
         annee_inscription_universitaire: formData.annee_inscription_universitaire ? parseInt(formData.annee_inscription_universitaire) : null,
       };
 
-      await register(submitData);
+      console.log("📤 Données envoyées au serveur :", submitData); // 👈 DEBUG
+
+      const response = await register(submitData);
+      console.log("✅ Réponse du serveur :", response); // 👈 DEBUG
+      
       onClose();
-      // Redirect will be handled by App.jsx
+      // Redirect to dashboard after successful registration
+      navigate('/dashboard');
     } catch (error) {
+      console.error("❌ Erreur détaillée :", error.response || error); // 👈 DEBUG
       setGeneralError(error.message || 'Erreur lors de l\'inscription');
     } finally {
       setLoading(false);
